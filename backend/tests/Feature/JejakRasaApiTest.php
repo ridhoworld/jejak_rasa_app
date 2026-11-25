@@ -40,6 +40,22 @@ class JejakRasaApiTest extends TestCase
             ->assertJsonPath('user.email', 'rina@example.com');
 
         $this->withToken($token)
+            ->putJson('/api/auth/profile', [
+                'name' => 'Rina Updated',
+                'email' => 'rina.baru@example.com',
+            ])
+            ->assertOk()
+            ->assertJsonPath('user.name', 'Rina Updated');
+
+        $this->withToken($token)
+            ->putJson('/api/auth/password', [
+                'current_password' => 'rahasia123',
+                'password' => 'barusekali123',
+                'password_confirmation' => 'barusekali123',
+            ])
+            ->assertOk();
+
+        $this->withToken($token)
             ->postJson('/api/auth/logout')
             ->assertOk();
     }
