@@ -213,6 +213,12 @@ class JejakRasaApiTest extends TestCase
         $storedPath = $photoRes->json('data.path');
         Storage::disk('public')->assertExists($storedPath);
 
+        // Photos gallery endpoint returns uploaded photo with place & dish context
+        $this->getJson('/api/photos')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.visit.place.name', 'Mie Ayam Berkah');
+
         // Deleting place cascades DB records and removes stored photo file
         $this->deleteJson("/api/places/{$place->id}")->assertOk();
 

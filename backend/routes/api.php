@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('dishes/{dish}', [VisitDishController::class, 'destroy']);
 
     // Photos (F-04)
+    Route::get('photos', [PhotoController::class, 'index']);
     Route::post('visits/{visit}/photos', [PhotoController::class, 'store']);
     Route::delete('photos/{photo}', [PhotoController::class, 'destroy']);
 

@@ -11,6 +11,28 @@ use Illuminate\Http\Request;
 
 class PhotoController extends Controller
 {
+    public function index(Request $request): JsonResponse
+    {
+        $query = Photo::query()
+            ->where('user_id', $request->user()->id)
+            ->with([
+                'visit:id,place_id,visited_at,rating',
+                'visit.place:id,name,category',
+                'dish:id,visit_id,name,price,rating',
+            ])
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
+
+        if ($request->filled('place_id')) {
+            $placeId = (int) $request->query('place_id');
+            $query->whereHas('visit', fn ($q) => $q->where('place_id', $placeId));
+        }
+
+        return response()->json([
+            'data' => $query->get(),
+        ]);
+    }
+
     public function store(Request $request, Visit $visit): JsonResponse
     {
         abort_if($visit->user_id !== $request->user()->id, 403, 'Akses ditolak.');
